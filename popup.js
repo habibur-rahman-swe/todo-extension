@@ -32,7 +32,13 @@ function validCategory(category) {
 function normalize(state) {
   return {
     lastDay: state && state.lastDay ? state.lastDay : getTodayKey(),
-    items: state && Array.isArray(state.items) ? state.items : [],
+    items: (state && Array.isArray(state.items) ? state.items : []).map((item) => ({
+      id: item && item.id ? item.id : "id-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+      text: item && typeof item.text === "string" ? item.text : "",
+      category: validCategory(item && item.category),
+      done: !!(item && item.done),
+      link: item && typeof item.link === "string" ? item.link.trim() : "",
+    })),
   };
 }
 
@@ -107,6 +113,38 @@ function render(state) {
 
   empty.hidden = true;
 
+function normalizeLinkUrl(link) {
+  const value = (link || "").trim();
+  if (!value) return "";
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) {
+    if (/^[a-zA-Z]:[\\/]/.test(value)) {
+      return "file:///" + value.replace(/\\/g, "/").replace(/ /g, "%20");
+    }
+    return value;
+  }
+  if (/^\\\\/.test(value)) {
+    return "file:" + value.replace(/\\/g, "/").replace(/ /g, "%20");
+  }
+  if (/^[\\/]/.test(value)) {
+    return "file://" + value.replace(/\\/g, "/").replace(/ /g, "%20");
+  }
+  return value;
+}
+
+async function openLink(link) {
+  const url = normalizeLinkUrl(link);
+  if (!url) return;
+  try {
+    if (chrome.tabs && chrome.tabs.create) {
+      await chrome.tabs.create({ url });
+      return;
+    }
+  } catch (error) {
+    console.error("Failed to open link in tab", error);
+  }
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
   visible.forEach((item) => {
     const li = document.createElement("li");
     const category = validCategory(item.category);
@@ -116,16 +154,46 @@ function render(state) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = !!item.done;
+    checkbox.setAttribute("aria-label", "Mark done");
     checkbox.addEventListener("change", () => toggleDone(item.id));
 
-    const text = document.createElement("span");
-    text.className = "todo-text";
-    text.textContent = item.text;
+    const content = document.createElement("div");
+    content.className = "todo-content";
 
-    const main = document.createElement("label");
+    const nameBtn = document.createElement("button");
+    nameBtn.type = "button";
+    nameBtn.className = "todo-text-btn";
+    nameBtn.textContent = item.text;
+
+    const linkValue = typeof item.link === "string" ? item.link.trim() : "";
+    const linkRow = document.createElement("div");
+    linkRow.className = "todo-link-row";
+    linkRow.hidden = true;
+    if (linkValue) {
+      const linkBtn = document.createElement("button");
+      linkBtn.type = "button";
+      linkBtn.className = "todo-link";
+      linkBtn.textContent = linkValue;
+      linkBtn.title = "Open link";
+      linkBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        openLink(linkValue);
+      });
+      linkRow.appendChild(linkBtn);
+      nameBtn.addEventListener("click", () => {
+        linkRow.hidden = !linkRow.hidden;
+      });
+    } else {
+      nameBtn.classList.add("no-link");
+    }
+
+    content.appendChild(nameBtn);
+    content.appendChild(linkRow);
+
+    const main = document.createElement("div");
     main.className = "todo-main";
     main.appendChild(checkbox);
-    main.appendChild(text);
+    main.appendChild(content);
 
     const badge = document.createElement("span");
     badge.className = "badge";
@@ -166,7 +234,7 @@ async function deleteItem(id) {
   render(state);
 }
 
-async function addItem(text, category) {
+async function addItem(text, category, link) {
   const trimmed = text.trim();
   if (!trimmed) return;
   const state = await ensureToday(await loadState());
@@ -175,6 +243,7 @@ async function addItem(text, category) {
     text: trimmed,
     category: validCategory(category),
     done: false,
+    link: (link || "").trim(),
   });
   await saveState(state);
   render(state);
@@ -241,10 +310,13 @@ function scheduleMidnightReset() {
 
 async function submitTodo() {
   const input = $("todoInput");
+  const linkInput = $("linkInput");
   const text = input.value;
+  const link = linkInput ? linkInput.value : "";
   if (!text.trim()) return;
-  await addItem(text, activeCategory);
+  await addItem(text, activeCategory, link);
   input.value = "";
+  if (linkInput) linkInput.value = "";
   input.focus();
 }
 
@@ -271,6 +343,9 @@ async function init() {
 
   $("addBtn").addEventListener("click", submitTodo);
   $("todoInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") submitTodo();
+  });
+  $("linkInput").addEventListener("keydown", (event) => {
     if (event.key === "Enter") submitTodo();
   });
   $("clearCheckedBtn").addEventListener("click", clearChecked);

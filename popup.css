@@ -123,7 +123,21 @@ body.minimized .app {
   background: #ffffff;
 }
 
-#todoInput:focus { border-color: #0969da; }
+#linkInput {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  background: #ffffff;
+}
+
+#todoInput:focus,
+#linkInput:focus { border-color: #0969da; }
 
 .add-btn {
   grid-column: 2;
@@ -136,13 +150,14 @@ body.minimized .app {
   font-size: 14px;
   font-family: inherit;
   cursor: pointer;
+  align-self: start;
 }
 
 .add-btn:hover { background: #0857c4; }
 
 .chips {
   grid-column: 1 / -1;
-  grid-row: 2;
+  grid-row: 3;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -233,10 +248,17 @@ body.minimized .app {
   gap: 10px;
   flex: 1;
   min-width: 0;
-  cursor: pointer;
 }
 
-.todo-list li.done .todo-text {
+.todo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-list li.done .todo-text-btn {
   text-decoration: line-through;
   color: #8b949e;
 }
@@ -250,12 +272,41 @@ body.minimized .app {
   flex: none;
 }
 
-.todo-text {
+.todo-text-btn {
   flex: 1;
   font-size: 14px;
   line-height: 1.35;
   word-break: break-word;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
 }
+
+.todo-text-btn.no-link {
+  cursor: default;
+}
+
+.todo-link-row[hidden] { display: none; }
+
+.todo-link {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: inherit;
+  color: #0969da;
+  text-align: left;
+  word-break: break-all;
+  cursor: pointer;
+}
+
+.todo-link:hover { text-decoration: underline; }
 
 .badge {
   font-size: 11px;

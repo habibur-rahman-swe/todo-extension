@@ -14,10 +14,11 @@ The same page is the toolbar popup (360px wide). A wider standalone window fills
 
 ## Using the list
 
-- Type a task, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
+- Type a task, optionally add a link or local folder path, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
+- Each task shows its name. Click the task name to reveal its link (if present); click the link to open it in a browser tab (web URLs, `file://` URLs, and local paths are supported).
 - Filter the list with **All**, **Office Work**, **Course**, **Learning**, or **Problem**. The progress bar and the `done / total` count always cover every item.
 - **Office Work** tasks are marked as priority (red) and stay above other incomplete categories. Completed tasks automatically move to the bottom of the list; other items keep their relative order within each group.
-- Check an item, or click its text. Delete it with **×**. **Reset ticks** unchecks everything. **Clear done** removes finished items.
+- Check an item to mark it done. Delete it with **×**. **Reset ticks** unchecks everything. **Clear done** removes finished items.
 - The header button collapses the list inside the page. It does not minimize the browser window.
 
 Todos are stored only in `chrome.storage.local` on this device. The extension has no host permissions and does not send data anywhere.
@@ -34,13 +35,14 @@ Key: `dailyTodoState`.
       "id": "id-1731740000000-42",
       "text": "Follow up with team",
       "category": "office",
-      "done": false
+      "done": false,
+      "link": "https://example.com"
     }
   ]
 }
 ```
 
-`lastDay` is the local date `YYYY-MM-DD`. On startup, on install, when the popup loads, when it becomes visible, and at local midnight, a new day sets every `done` flag to `false` and updates `lastDay`. Text, id, and category stay.
+`lastDay` is the local date `YYYY-MM-DD`. On startup, on install, when the popup loads, when it becomes visible, and at local midnight, a new day sets every `done` flag to `false` and updates `lastDay`. Text, id, category, and link stay.
 
 ## Files
 
