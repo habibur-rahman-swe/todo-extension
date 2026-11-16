@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Todo</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">✓</span>
+        <div class="brand-text">
+          <h1>Daily Todo</h1>
+          <span id="dateLabel" class="date">—</span>
+        </div>
+      </div>
+      <button id="toggleBtn" class="icon-btn" type="button" title="Collapse" aria-label="Collapse list" aria-expanded="true">–</button>
+    </header>
+
+    <div class="progress-wrap" id="progressWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="0 of 0 done">
+      <div id="progressBar" class="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="add-row">
+      <input id="todoInput" type="text" placeholder="What needs to be done today?" aria-label="Todo text" autocomplete="off" />
+      <div class="chips" id="categoryChips">
+        <button class="chip active" type="button" data-cat="course" aria-pressed="true">Course</button>
+        <button class="chip" type="button" data-cat="learning" aria-pressed="false">Learning</button>
+        <button class="chip" type="button" data-cat="problem" aria-pressed="false">Problem</button>
+      </div>
+      <button id="addBtn" class="add-btn" type="button">Add</button>
+    </div>
+
+    <div class="filters" id="filterTabs" role="tablist" aria-label="Filter todos">
+      <button class="filter active" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="filter" type="button" data-filter="course" aria-pressed="false">Course</button>
+      <button class="filter" type="button" data-filter="learning" aria-pressed="false">Learning</button>
+      <button class="filter" type="button" data-filter="problem" aria-pressed="false">Problem</button>
+    </div>
+
+    <ul class="todo-list" id="todoList"></ul>
+
+    <div class="empty-state" id="emptyState" hidden>
+      <div class="empty-icon" aria-hidden="true">✦</div>
+      <p id="emptyText">No todos yet.<br />Add one above to get started.</p>
+    </div>
+
+    <footer class="footer">
+      <span id="stats" class="stats">0 / 0 done</span>
+      <div class="actions">
+        <button id="resetBtn" class="link-btn" type="button">Reset ticks</button>
+        <button id="clearCheckedBtn" class="link-btn danger" type="button">Clear done</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
