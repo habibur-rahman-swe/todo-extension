@@ -14,7 +14,7 @@ The same page is the toolbar popup (360px wide). A wider standalone window fills
 
 ## Using the list
 
-- Type a task, optionally add a link or local folder path, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
+- Click **+ New task** to open the add form. Enter a task, optionally add a link or local folder path, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter. Use **Cancel** or `Esc` to close the form.
 - Each task shows its name. Click the task name to reveal its link (if present); click the link to open it in a browser tab (web URLs, `file://` URLs, and local paths are supported).
 - Filter the list with **All**, **Office Work**, **Course**, **Learning**, or **Problem**. The progress bar and the `done / total` count always cover every item.
 - **Office Work** tasks are marked as priority (red) and stay above other incomplete categories. Completed tasks automatically move to the bottom of the list; other items keep their relative order within each group.

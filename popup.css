@@ -101,18 +101,40 @@ body.minimized .app {
   transition: width 0.2s ease;
 }
 
-.add-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
+.add-section {
   padding: 12px 16px;
   background: #ffffff;
   border-bottom: 1px solid #eaecef;
 }
 
+.new-task-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px dashed #d0d7de;
+  border-radius: 8px;
+  background: #f6f8fa;
+  color: #57606a;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.new-task-btn:hover {
+  background: #eaecef;
+  color: #1f2329;
+}
+
+.add-row[hidden] { display: none; }
+
+.add-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 #todoInput {
-  grid-column: 1;
-  grid-row: 1;
   min-width: 0;
   padding: 8px 12px;
   border: 1px solid #d0d7de;
@@ -124,8 +146,6 @@ body.minimized .app {
 }
 
 #linkInput {
-  grid-column: 1 / -1;
-  grid-row: 2;
   min-width: 0;
   padding: 8px 12px;
   border: 1px solid #d0d7de;
@@ -139,9 +159,13 @@ body.minimized .app {
 #todoInput:focus,
 #linkInput:focus { border-color: #0969da; }
 
+.add-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .add-btn {
-  grid-column: 2;
-  grid-row: 1;
+  flex: 1;
   padding: 8px 14px;
   border: none;
   border-radius: 8px;
@@ -150,14 +174,24 @@ body.minimized .app {
   font-size: 14px;
   font-family: inherit;
   cursor: pointer;
-  align-self: start;
 }
 
 .add-btn:hover { background: #0857c4; }
 
+.cancel-btn {
+  padding: 8px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #57606a;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.cancel-btn:hover { background: #f6f8fa; }
+
 .chips {
-  grid-column: 1 / -1;
-  grid-row: 3;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -399,7 +433,7 @@ input:focus-visible {
 }
 
 body.minimized .progress-wrap,
-body.minimized .add-row,
+body.minimized .add-section,
 body.minimized .filters,
 body.minimized .todo-list,
 body.minimized .empty-state,

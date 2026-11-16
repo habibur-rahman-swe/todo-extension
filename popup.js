@@ -317,11 +317,42 @@ async function submitTodo() {
   await addItem(text, activeCategory, link);
   input.value = "";
   if (linkInput) linkInput.value = "";
-  input.focus();
+  closeAddForm();
+}
+
+function openAddForm() {
+  const form = $("addForm");
+  const btn = $("newTaskBtn");
+  if (!form) return;
+  form.hidden = false;
+  if (btn) btn.hidden = true;
+  $("todoInput").focus();
+}
+
+function closeAddForm() {
+  const form = $("addForm");
+  const btn = $("newTaskBtn");
+  if (!form) return;
+  form.hidden = true;
+  if (btn) btn.hidden = false;
+  $("todoInput").value = "";
+  const linkInput = $("linkInput");
+  if (linkInput) linkInput.value = "";
 }
 
 async function init() {
   setupToggle();
+
+  const newTaskBtn = $("newTaskBtn");
+  const cancelAddBtn = $("cancelAddBtn");
+  if (newTaskBtn) newTaskBtn.addEventListener("click", openAddForm);
+  if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddForm);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      const form = $("addForm");
+      if (form && !form.hidden) closeAddForm();
+    }
+  });
 
   const initialChip = document.querySelector("#categoryChips .chip.active");
   const initialFilter = document.querySelector("#filterTabs .filter.active");
