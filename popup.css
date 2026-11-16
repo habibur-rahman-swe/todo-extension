@@ -276,6 +276,23 @@ body.minimized .app {
   background: #fff8f8;
 }
 
+.todo-list li.editing {
+  flex-direction: column;
+  align-items: stretch;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+}
+
+.todo-list li.editing.priority {
+  border-color: #ff8182;
+}
+
+.todo-list li.editing .todo-main,
+.todo-list li.editing .badge,
+.todo-list li.editing .item-actions {
+  display: none;
+}
+
 .todo-main {
   display: flex;
   align-items: flex-start;
@@ -368,6 +385,66 @@ body.minimized .app {
 .delete-btn:hover {
   color: #cf222e;
   background: #ffebe9;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+
+.edit-btn {
+  border: none;
+  background: transparent;
+  color: #8b949e;
+  font-size: 15px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  line-height: 1;
+  flex: none;
+}
+
+.edit-btn:hover {
+  color: #0969da;
+  background: #eaecef;
+}
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.edit-row[hidden] { display: none; }
+
+.edit-text,
+.edit-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: #ffffff;
+}
+
+.edit-link { font-size: 13px; }
+
+.edit-text:focus,
+.edit-link:focus { border-color: #0969da; }
+
+.edit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .empty-state {

@@ -208,9 +208,44 @@ async function openLink(link) {
     del.setAttribute("aria-label", "Delete");
     del.addEventListener("click", () => deleteItem(item.id));
 
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.type = "button";
+    editBtn.textContent = "✎";
+    editBtn.title = "Edit";
+    editBtn.setAttribute("aria-label", "Edit");
+    editBtn.addEventListener("click", () => startEdit(item, li));
+
+    const actions = document.createElement("div");
+    actions.className = "item-actions";
+    actions.appendChild(editBtn);
+    actions.appendChild(del);
+
+    const editRow = document.createElement("div");
+    editRow.className = "edit-row";
+    editRow.hidden = true;
+    editRow.setAttribute("role", "form");
+    editRow.setAttribute("aria-label", "Edit task");
+    editRow.innerHTML = `
+      <input class="edit-text" type="text" placeholder="Task text" autocomplete="off" />
+      <input class="edit-link" type="text" placeholder="Link or folder path (optional)" autocomplete="off" />
+      <div class="chips edit-chips">
+        <button class="chip" type="button" data-cat="office" aria-pressed="false">Office Work</button>
+        <button class="chip" type="button" data-cat="course" aria-pressed="false">Course</button>
+        <button class="chip" type="button" data-cat="learning" aria-pressed="false">Learning</button>
+        <button class="chip" type="button" data-cat="problem" aria-pressed="false">Problem</button>
+      </div>
+      <div class="add-actions">
+        <button class="add-btn edit-save" type="button">Save</button>
+        <button class="cancel-btn edit-cancel" type="button">Cancel</button>
+      </div>
+    `;
+
+    li.dataset.id = item.id;
     li.appendChild(main);
     li.appendChild(badge);
-    li.appendChild(del);
+    li.appendChild(actions);
+    li.appendChild(editRow);
     list.appendChild(li);
   });
 }
@@ -245,6 +280,84 @@ async function addItem(text, category, link) {
     done: false,
     link: (link || "").trim(),
   });
+  await saveState(state);
+  render(state);
+}
+
+function startEdit(item, li) {
+  const editRow = li.querySelector(".edit-row");
+  const textInput = li.querySelector(".edit-text");
+  const linkInput = li.querySelector(".edit-link");
+  const chips = li.querySelector(".edit-chips");
+  if (!editRow || !textInput || !linkInput || !chips) return;
+
+  const nameBtn = li.querySelector(".todo-text-btn");
+  const badge = li.querySelector(".badge");
+  const actions = li.querySelector(".item-actions");
+  const main = li.querySelector(".todo-main");
+
+  textInput.value = item.text;
+  linkInput.value = item.link || "";
+  setEditChips(chips, item.category);
+
+  editRow.hidden = false;
+  actions.hidden = true;
+  main.hidden = true;
+  badge.hidden = true;
+  nameBtn.hidden = true;
+  li.classList.add("editing");
+
+  const save = async () => {
+    const text = textInput.value.trim();
+    const link = linkInput.value.trim();
+    if (!text) {
+      cancelEdit();
+      return;
+    }
+    const selectedChip = chips.querySelector(".chip.active");
+    const category = selectedChip ? selectedChip.dataset.cat : item.category;
+    await updateItem(item.id, text, category, link);
+  };
+
+  const cancelEdit = () => {
+    editRow.hidden = true;
+    actions.hidden = false;
+    main.hidden = false;
+    badge.hidden = false;
+    nameBtn.hidden = false;
+    li.classList.remove("editing");
+  };
+
+  li.querySelector(".edit-save").addEventListener("click", save);
+  li.querySelector(".edit-cancel").addEventListener("click", cancelEdit);
+  const onKey = (event) => {
+    if (event.key === "Escape") {
+      cancelEdit();
+    } else if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      save();
+    }
+  };
+  textInput.addEventListener("keydown", onKey);
+  linkInput.addEventListener("keydown", onKey);
+  textInput.focus();
+}
+
+function setEditChips(chips, category) {
+  chips.querySelectorAll(".chip").forEach((chip) => {
+    const on = chip.dataset.cat === validCategory(category);
+    chip.classList.toggle("active", on);
+    chip.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+async function updateItem(id, text, category, link) {
+  const state = await ensureToday(await loadState());
+  const item = state.items.find((entry) => entry.id === id);
+  if (!item) return;
+  item.text = text;
+  item.category = validCategory(category);
+  item.link = (link || "").trim();
   await saveState(state);
   render(state);
 }
@@ -363,6 +476,14 @@ async function init() {
     const btn = event.target.closest(".chip");
     if (!btn) return;
     setCategory(btn.dataset.cat);
+  });
+
+  $("todoList").addEventListener("click", (event) => {
+    const chip = event.target.closest(".edit-chips .chip");
+    if (!chip) return;
+    const row = chip.closest(".edit-row");
+    if (!row) return;
+    setEditChips(chip.closest(".edit-chips"), chip.dataset.cat);
   });
 
   $("filterTabs").addEventListener("click", async (event) => {
