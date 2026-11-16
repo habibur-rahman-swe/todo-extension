@@ -317,7 +317,7 @@ async function submitTodo() {
   await addItem(text, activeCategory, link);
   input.value = "";
   if (linkInput) linkInput.value = "";
-  closeAddForm();
+  input.focus();
 }
 
 function openAddForm() {
