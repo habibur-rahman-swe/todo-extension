@@ -1,15 +1,17 @@
 const STORAGE_KEY = "dailyTodoState";
-const CATEGORIES = ["course", "learning", "problem"];
+const CATEGORIES = ["office", "course", "learning", "problem"];
+const PRIORITY_CATEGORY = "office";
 
 const $ = (id) => document.getElementById(id);
 
 const categoryLabels = {
+  office: "Office Work",
   course: "Course",
   learning: "Learning",
   problem: "Problem",
 };
 
-let activeCategory = "course";
+let activeCategory = "office";
 let activeFilter = "all";
 
 function getTodayKey() {
@@ -52,9 +54,22 @@ async function ensureToday(state) {
   return state;
 }
 
+function sortItems(items) {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => {
+      const ap = a.item.category === PRIORITY_CATEGORY ? 0 : 1;
+      const bp = b.item.category === PRIORITY_CATEGORY ? 0 : 1;
+      if (ap !== bp) return ap - bp;
+      return a.index - b.index;
+    })
+    .map((entry) => entry.item);
+}
+
 function visibleItems(items) {
-  if (activeFilter === "all") return items;
-  return items.filter((item) => item.category === activeFilter);
+  const sorted = sortItems(items);
+  if (activeFilter === "all") return sorted;
+  return sorted.filter((item) => item.category === activeFilter);
 }
 
 function render(state) {
@@ -91,7 +106,9 @@ function render(state) {
 
   visible.forEach((item) => {
     const li = document.createElement("li");
+    const category = validCategory(item.category);
     if (item.done) li.classList.add("done");
+    if (category === PRIORITY_CATEGORY) li.classList.add("priority");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -107,11 +124,10 @@ function render(state) {
     main.appendChild(checkbox);
     main.appendChild(text);
 
-    const category = validCategory(item.category);
     const badge = document.createElement("span");
     badge.className = "badge";
-    badge.dataset.cat = item.category || category;
-    badge.textContent = categoryLabels[item.category] || item.category || categoryLabels[category];
+    badge.dataset.cat = category;
+    badge.textContent = categoryLabels[category] || category;
 
     const del = document.createElement("button");
     del.className = "delete-btn";
@@ -234,7 +250,7 @@ async function init() {
 
   const initialChip = document.querySelector("#categoryChips .chip.active");
   const initialFilter = document.querySelector("#filterTabs .filter.active");
-  setCategory(initialChip ? initialChip.dataset.cat : "course");
+  setCategory(initialChip ? initialChip.dataset.cat : "office");
   setFilter(initialFilter ? initialFilter.dataset.filter : "all");
 
   $("categoryChips").addEventListener("click", (event) => {

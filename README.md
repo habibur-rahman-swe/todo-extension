@@ -14,8 +14,9 @@ The same page is the toolbar popup (360px wide). A wider standalone window fills
 
 ## Using the list
 
-- Type a task, pick **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
-- Filter the list with **All**, **Course**, **Learning**, or **Problem**. The progress bar and the `done / total` count always cover every item.
+- Type a task, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
+- Filter the list with **All**, **Office Work**, **Course**, **Learning**, or **Problem**. The progress bar and the `done / total` count always cover every item.
+- **Office Work** tasks are marked as priority (red) and always stay at the top of the list. Other items keep their relative order.
 - Check an item, or click its text. Delete it with **×**. **Reset ticks** unchecks everything. **Clear done** removes finished items.
 - The header button collapses the list inside the page. It does not minimize the browser window.
 
@@ -31,8 +32,8 @@ Key: `dailyTodoState`.
   "items": [
     {
       "id": "id-1731740000000-42",
-      "text": "Finish chapter 3",
-      "category": "course",
+      "text": "Follow up with team",
+      "category": "office",
       "done": false
     }
   ]
@@ -52,4 +53,4 @@ Key: `dailyTodoState`.
 | `popup.js` | Render, add, filter, toggle, delete, reset, and clear. |
 | `icon16.png`, `icon48.png`, `icon128.png` | Toolbar and extension icons. |
 
-Category values stay `course`, `learning`, and `problem`.
+Category values are `office`, `course`, `learning`, and `problem`. Legacy items with unknown categories fall back to `course`.

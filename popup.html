@@ -26,7 +26,8 @@
     <div class="add-row">
       <input id="todoInput" type="text" placeholder="What needs to be done today?" aria-label="Todo text" autocomplete="off" />
       <div class="chips" id="categoryChips">
-        <button class="chip active" type="button" data-cat="course" aria-pressed="true">Course</button>
+        <button class="chip active" type="button" data-cat="office" aria-pressed="true">Office Work</button>
+        <button class="chip" type="button" data-cat="course" aria-pressed="false">Course</button>
         <button class="chip" type="button" data-cat="learning" aria-pressed="false">Learning</button>
         <button class="chip" type="button" data-cat="problem" aria-pressed="false">Problem</button>
       </div>
@@ -35,6 +36,7 @@
 
     <div class="filters" id="filterTabs" role="tablist" aria-label="Filter todos">
       <button class="filter active" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="filter" type="button" data-filter="office" aria-pressed="false">Office Work</button>
       <button class="filter" type="button" data-filter="course" aria-pressed="false">Course</button>
       <button class="filter" type="button" data-filter="learning" aria-pressed="false">Learning</button>
       <button class="filter" type="button" data-filter="problem" aria-pressed="false">Problem</button>
