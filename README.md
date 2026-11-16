@@ -16,7 +16,7 @@ The same page is the toolbar popup (360px wide). A wider standalone window fills
 
 - Type a task, pick **Office Work**, **Course**, **Learning**, or **Problem**, then press **Add** or Enter.
 - Filter the list with **All**, **Office Work**, **Course**, **Learning**, or **Problem**. The progress bar and the `done / total` count always cover every item.
-- **Office Work** tasks are marked as priority (red) and always stay at the top of the list. Other items keep their relative order.
+- **Office Work** tasks are marked as priority (red) and stay above other incomplete categories. Completed tasks automatically move to the bottom of the list; other items keep their relative order within each group.
 - Check an item, or click its text. Delete it with **×**. **Reset ticks** unchecks everything. **Clear done** removes finished items.
 - The header button collapses the list inside the page. It does not minimize the browser window.
 

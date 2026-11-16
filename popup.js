@@ -58,6 +58,9 @@ function sortItems(items) {
   return items
     .map((item, index) => ({ item, index }))
     .sort((a, b) => {
+      const ad = a.item.done ? 1 : 0;
+      const bd = b.item.done ? 1 : 0;
+      if (ad !== bd) return ad - bd;
       const ap = a.item.category === PRIORITY_CATEGORY ? 0 : 1;
       const bp = b.item.category === PRIORITY_CATEGORY ? 0 : 1;
       if (ap !== bp) return ap - bp;
