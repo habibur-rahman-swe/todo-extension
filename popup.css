@@ -257,6 +257,12 @@ body.minimized .app {
   color: #ffffff;
 }
 
+.filter.active[data-filter="all"] {
+  background: #eaecef;
+  border-color: #d0d7de;
+  color: #1f2329;
+}
+
 .todo-list {
   list-style: none;
   flex: 1;
