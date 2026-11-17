@@ -269,6 +269,8 @@ body.minimized .app {
   background: #ffffff;
   border-radius: 8px;
   margin-bottom: 6px;
+  box-shadow: 0 0 0 rgba(31, 35, 41, 0);
+  transition: box-shadow 180ms ease;
 }
 
 .todo-list li.priority {
@@ -287,10 +289,49 @@ body.minimized .app {
   border-color: #ff8182;
 }
 
+.todo-list li.editing .drag-handle,
 .todo-list li.editing .todo-main,
 .todo-list li.editing .badge,
 .todo-list li.editing .item-actions {
   display: none;
+}
+
+.drag-handle {
+  display: inline-block;
+  width: 18px;
+  height: 22px;
+  flex: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  border-radius: 4px;
+  background-image: radial-gradient(circle, #8b949e 1.15px, transparent 1.25px);
+  background-size: 5px 5px;
+  background-position: 3px 3px;
+}
+
+.drag-handle:hover { background-color: #eaecef; }
+
+body.dragging-todo,
+body.dragging-todo .drag-handle { cursor: grabbing; }
+
+body.dragging-todo { user-select: none; }
+
+.todo-list li.dragging {
+  position: fixed;
+  z-index: 5;
+  margin: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(31, 35, 41, 0.2);
+}
+
+.todo-list li.drag-gap {
+  display: block;
+  padding: 0;
+  background: #e8f1fb;
+  border: 1px dashed #b6d4f5;
+  box-shadow: none;
 }
 
 .todo-main {

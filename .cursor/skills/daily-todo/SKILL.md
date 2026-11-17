@@ -27,20 +27,29 @@ Key: `dailyTodoState` in `chrome.storage.local`.
 ```js
 {
   lastDay: "YYYY-MM-DD", // local calendar date
+  manualOrder: true, // array order is the list order
   items: [
     {
       id: "id-<Date.now()>-<0-999>",
       text: string,
-      category: "course" | "learning" | "problem",
+      category: "office" | "course" | "learning" | "problem",
       done: boolean
     }
   ]
 }
 ```
 
+## Order
+
+The `items` array is the on-screen order. When `manualOrder` is missing, sort once (incomplete before done, Office Work before other categories, then the existing order), set `manualOrder` to true, and save. Later renders use the stored array.
+
+Each row has a `.drag-handle`. Dragging it lifts that row and slides the others into the new order, then writes that order back into `items`. Rows hidden by the filter keep their places. New items are inserted after the last incomplete item, or at the start when every item is done.
+
+Office Work rows still use the priority style. Checking an item does not move it.
+
 `STORAGE_KEY` and `getTodayKey()` are duplicated in `popup.js` and `background.js`. Change both together.
 
-Chip, filter, and badge text is Course, Learning, and Problem. Stored values stay `course`, `learning`, and `problem`. Unknown categories save as `course`.
+Chip, filter, and badge text is Office Work, Course, Learning, and Problem. Stored values stay `office`, `course`, `learning`, and `problem`. Unknown categories save as `course`.
 
 New items use `done: false`. Skip blank text.
 
@@ -52,7 +61,7 @@ When `lastDay` is not today:
 
 1. Set `lastDay` to today (`YYYY-MM-DD`, local timezone).
 2. Set every `item.done` to `false`.
-3. Leave `id`, `text`, and `category` as they are.
+3. Leave `id`, `text`, `category`, `link`, and order as they are.
 
 Update `lastDay` only on that reset path. Guard a missing `items` array before mapping.
 
