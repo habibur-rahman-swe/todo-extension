@@ -228,9 +228,9 @@ body.minimized .app {
 
 .chip.active[data-cat="problem"],
 .badge[data-cat="problem"] {
-  background: #fff1e5;
-  border-color: #ffd8b5;
-  color: #bc4c00;
+  background: #fff8c5;
+  border-color: #fae17d;
+  color: #9a6700;
 }
 
 .chip.active[data-cat="office"],
