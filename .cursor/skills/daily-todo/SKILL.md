@@ -41,11 +41,11 @@ Key: `dailyTodoState` in `chrome.storage.local`.
 
 ## Order
 
-The `items` array is the on-screen order. When `manualOrder` is missing, sort once (incomplete before done, Office Work before other categories, then the existing order), set `manualOrder` to true, and save. Later renders use the stored array.
+The `items` array is the on-screen order. Unchecked Office Work items stay above every other item, keeping their relative order. Other incomplete items come next. Completed items stay below the incomplete ones, keeping their relative order. Apply that grouping on load and after each edit, then set `manualOrder` to true and save when the order changed.
 
-Each row has a `.drag-handle`. Dragging it lifts that row and slides the others into the new order, then writes that order back into `items`. Rows hidden by the filter keep their places. New items are inserted after the last incomplete item, or at the start when every item is done.
+Each row has a `.drag-handle`. Dragging reorders within that grouping. An unchecked Office Work row dropped below another category, or a completed row dropped above an open one, moves back. Rows hidden by the filter keep their places. New Office Work items are inserted after the last unchecked Office Work item. Other new items are inserted after the last incomplete item.
 
-Office Work rows still use the priority style. Checking an item does not move it.
+Office Work rows still use the priority style. Checking an item moves it under the remaining open items. If every other item is already done, it goes to the end. Unchecking an Office Work item returns it to the unchecked Office Work group. Unchecking any other item puts it back with the other incomplete items, below Office Work.
 
 `STORAGE_KEY` and `getTodayKey()` are duplicated in `popup.js` and `background.js`. Change both together.
 
@@ -61,7 +61,7 @@ When `lastDay` is not today:
 
 1. Set `lastDay` to today (`YYYY-MM-DD`, local timezone).
 2. Set every `item.done` to `false`.
-3. Leave `id`, `text`, `category`, `link`, and order as they are.
+3. Leave `id`, `text`, `category`, and `link`. `background.js` does not reorder. The popup applies the grouping above when it loads.
 
 Update `lastDay` only on that reset path. Guard a missing `items` array before mapping.
 

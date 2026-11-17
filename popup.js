@@ -46,12 +46,11 @@ function normalize(state) {
 async function loadState() {
   const result = await chrome.storage.local.get(STORAGE_KEY);
   const state = normalize(result[STORAGE_KEY]);
-  // Keep the old pinned order the first time, then leave the array as the user arranged it.
-  if (!state.manualOrder) {
-    state.items = sortItems(state.items);
-    state.manualOrder = true;
-    await saveState(state);
-  }
+  const ordered = orderItems(state.items);
+  const changed = !state.manualOrder || ordered.some((item, index) => item !== state.items[index]);
+  state.items = ordered;
+  state.manualOrder = true;
+  if (changed) await saveState(state);
   return state;
 }
 
@@ -63,24 +62,31 @@ async function ensureToday(state) {
   const today = getTodayKey();
   if (state.lastDay === today) return state;
   state.lastDay = today;
-  state.items = state.items.map((item) => ({ ...item, done: false }));
+  state.items = orderItems(state.items.map((item) => ({ ...item, done: false })));
   await saveState(state);
   return state;
 }
 
-function sortItems(items) {
-  return items
-    .map((item, index) => ({ item, index }))
-    .sort((a, b) => {
-      const ad = a.item.done ? 1 : 0;
-      const bd = b.item.done ? 1 : 0;
-      if (ad !== bd) return ad - bd;
-      const ap = a.item.category === PRIORITY_CATEGORY ? 0 : 1;
-      const bp = b.item.category === PRIORITY_CATEGORY ? 0 : 1;
-      if (ap !== bp) return ap - bp;
-      return a.index - b.index;
-    })
-    .map((entry) => entry.item);
+function orderItems(items) {
+  const openOffice = [];
+  const openOther = [];
+  const done = [];
+  for (const item of items) {
+    if (item.done) done.push(item);
+    else if (item.category === PRIORITY_CATEGORY) openOffice.push(item);
+    else openOther.push(item);
+  }
+  return openOffice.concat(openOther, done);
+}
+
+function placeToggled(items, item) {
+  const ordered = orderItems(items);
+  if (item.done && ordered.every((entry) => entry.done)) {
+    const rest = ordered.filter((entry) => entry !== item);
+    rest.push(item);
+    return rest;
+  }
+  return ordered;
 }
 
 function visibleItems(items) {
@@ -108,13 +114,6 @@ function reorderVisibleItems(items, visibleIds) {
   return changed ? next : items;
 }
 
-function indexForNewItem(items) {
-  let lastOpen = -1;
-  items.forEach((item, index) => {
-    if (!item.done) lastOpen = index;
-  });
-  return lastOpen + 1;
-}
 
 function render(state) {
   const items = state.items || [];
@@ -298,11 +297,19 @@ async function refresh() {
 }
 
 async function toggleDone(id) {
+  const list = $("todoList");
+  const scrollTop = list.scrollTop;
   const state = await ensureToday(await loadState());
   const item = state.items.find((entry) => entry.id === id);
-  if (item) item.done = !item.done;
+  if (item) {
+    item.done = !item.done;
+    state.items = placeToggled(state.items, item);
+  }
   await saveState(state);
   render(state);
+  $("todoList").scrollTop = scrollTop;
+  const row = [...$("todoList").children].find((entry) => entry.dataset.id === id);
+  if (row) row.scrollIntoView({ block: "nearest" });
 }
 
 async function deleteItem(id) {
@@ -323,7 +330,8 @@ async function addItem(text, category, link) {
     done: false,
     link: (link || "").trim(),
   };
-  state.items.splice(indexForNewItem(state.items), 0, item);
+  state.items.push(item);
+  state.items = orderItems(state.items);
   await saveState(state);
   render(state);
   const row = [...$("todoList").children].find((entry) => entry.dataset.id === item.id);
@@ -404,6 +412,7 @@ async function updateItem(id, text, category, link) {
   item.text = text;
   item.category = validCategory(category);
   item.link = (link || "").trim();
+  state.items = orderItems(state.items);
   await saveState(state);
   render(state);
 }
@@ -417,7 +426,7 @@ async function clearChecked() {
 
 async function resetAll() {
   const state = await ensureToday(await loadState());
-  state.items = state.items.map((item) => ({ ...item, done: false }));
+  state.items = orderItems(state.items.map((item) => ({ ...item, done: false })));
   await saveState(state);
   render(state);
 }
@@ -500,8 +509,15 @@ async function persistVisibleOrder() {
     return;
   }
   if (!sameOrder) {
-    state.items = reorderVisibleItems(state.items, visibleIds);
+    state.items = orderItems(reorderVisibleItems(state.items, visibleIds));
     await saveState(state);
+    const nextIds = visibleItems(state.items).map((item) => item.id);
+    const stayed = nextIds.length === visibleIds.length && nextIds.every((id, index) => id === visibleIds[index]);
+    if (!stayed) {
+      render(state);
+      $("todoList").scrollTop = scrollTop;
+      return;
+    }
   }
   if (dayChanged) {
     render(state);
