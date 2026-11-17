@@ -32,7 +32,7 @@ Key: `dailyTodoState` in `chrome.storage.local`.
     {
       id: "id-<Date.now()>-<0-999>",
       text: string,
-      category: "office" | "course" | "learning" | "problem",
+      category: "office" | "course" | "learning" | "others",
       done: boolean
     }
   ]
@@ -49,7 +49,7 @@ Office Work rows still use the priority style. Checking an item does not move it
 
 `STORAGE_KEY` and `getTodayKey()` are duplicated in `popup.js` and `background.js`. Change both together.
 
-Chip, filter, and badge text is Office Work, Course, Learning, and Problem. Stored values stay `office`, `course`, `learning`, and `problem`. Unknown categories save as `course`.
+Chip, filter, and badge text is Office Work, Course, Learning, and Others. Stored values stay `office`, `course`, `learning`, and `others`. Unknown categories save as `course`.
 
 New items use `done: false`. Skip blank text.
 
@@ -85,9 +85,9 @@ Constants in `background.js`: URL `chrome.runtime.getURL("popup.html")`, 420×60
 | `progressWrap` | Progressbar for done / total, `aria-valuenow` 0–100 |
 | `progressBar` | Width percent of done / total |
 | `todoInput` | New item text |
-| `categoryChips` | Buttons with `data-cat`: `course`, `learning`, `problem` |
+| `categoryChips` | Buttons with `data-cat`: `course`, `learning`, `others` |
 | `addBtn` | Add the trimmed input and the active chip |
-| `filterTabs` | Buttons with `data-filter`: `all`, `course`, `learning`, `problem` |
+| `filterTabs` | Buttons with `data-filter`: `all`, `course`, `learning`, `others` |
 | `todoList` | Rendered rows |
 | `emptyState` | Shown when the visible list is empty. `#emptyText` explains an empty list or an empty filter |
 | `stats` | `N / M done` for every stored item |
@@ -98,7 +98,7 @@ The active category is `.chip.active` (`aria-pressed`). Add and Enter use its `d
 
 The active filter is `.filter.active`. `render()` applies it before deciding the list is empty. Progress and stats ignore the filter and still update when every item is filtered out or the stored list is empty (`0 / 0 done`, 0% bar).
 
-Each row is a `label.todo-main` (checkbox + `.todo-text`), a `.badge` with `data-cat`, and `.delete-btn` with `aria-label="Delete"`. Badge colors follow `data-cat`: course, learning, problem.
+Each row is a `label.todo-main` (checkbox + `.todo-text`), a `.badge` with `data-cat`, and `.delete-btn` with `aria-label="Delete"`. Badge colors follow `data-cat`: course, learning, others.
 
 ## Editing rules
 

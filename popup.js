@@ -1,5 +1,5 @@
 const STORAGE_KEY = "dailyTodoState";
-const CATEGORIES = ["office", "course", "learning", "problem"];
+const CATEGORIES = ["office", "course", "learning", "others"];
 const PRIORITY_CATEGORY = "office";
 
 const $ = (id) => document.getElementById(id);
@@ -8,7 +8,7 @@ const categoryLabels = {
   office: "Office Work",
   course: "Course",
   learning: "Learning",
-  problem: "Problem",
+  others: "Others",
 };
 
 let activeCategory = "office";
@@ -268,7 +268,7 @@ async function openLink(link) {
         <button class="chip" type="button" data-cat="office" aria-pressed="false">Office Work</button>
         <button class="chip" type="button" data-cat="course" aria-pressed="false">Course</button>
         <button class="chip" type="button" data-cat="learning" aria-pressed="false">Learning</button>
-        <button class="chip" type="button" data-cat="problem" aria-pressed="false">Problem</button>
+        <button class="chip" type="button" data-cat="others" aria-pressed="false">Others</button>
       </div>
       <div class="add-actions">
         <button class="add-btn edit-save" type="button">Save</button>

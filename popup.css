@@ -226,8 +226,8 @@ body.minimized .app {
   color: #1a7f37;
 }
 
-.chip.active[data-cat="problem"],
-.badge[data-cat="problem"] {
+.chip.active[data-cat="others"],
+.badge[data-cat="others"] {
   background: #fff8c5;
   border-color: #fae17d;
   color: #9a6700;
