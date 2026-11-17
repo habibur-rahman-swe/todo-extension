@@ -213,32 +213,28 @@ body.minimized .app {
 .filter:hover { background: #f6f8fa; }
 
 .chip.active[data-cat="course"],
-.badge[data-cat="course"],
-.filter.active[data-filter="course"] {
+.badge[data-cat="course"] {
   background: #ddf4ff;
   border-color: #b6e3ff;
   color: #0969da;
 }
 
 .chip.active[data-cat="learning"],
-.badge[data-cat="learning"],
-.filter.active[data-filter="learning"] {
+.badge[data-cat="learning"] {
   background: #dafbe1;
   border-color: #aceebb;
   color: #1a7f37;
 }
 
 .chip.active[data-cat="others"],
-.badge[data-cat="others"],
-.filter.active[data-filter="others"] {
+.badge[data-cat="others"] {
   background: #fff8c5;
   border-color: #fae17d;
   color: #9a6700;
 }
 
 .chip.active[data-cat="office"],
-.badge[data-cat="office"],
-.filter.active[data-filter="office"] {
+.badge[data-cat="office"] {
   background: #ffebe9;
   border-color: #ff8182;
   color: #cf222e;
